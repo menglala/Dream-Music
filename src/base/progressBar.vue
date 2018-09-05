@@ -16,7 +16,7 @@ export default {
   props: {
     percent: {
       type: Number,
-      default: '0'
+      default: 0
     }
   },
   data() {
@@ -29,7 +29,7 @@ export default {
     percent(newVal) {
       if (newVal > 0 && !this.initiate) {
         const progressWidth = this.$refs.progress.clientWidth - btnWidth
-        //console.log(progressWidth);  /// 在显示mini播放器的时候是 -16 
+        // 在显示mini播放器的时候是-16 
         let offsetWith = newVal * progressWidth
         this.offsetWith(offsetWith)
       }

@@ -6,8 +6,8 @@ export const commonParams = {
   notice: 0
 }
 
-export const options= {
+export const options = {
   param: 'jsonpCallback'
 }
 
-export const ERR_OK= 0
+export const ERR_OK = 0

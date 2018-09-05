@@ -1,10 +1,10 @@
 <template>
   <div class="singer">
     <scroller :on-refresh="refresh" :on-infinite="infinite" ref="scroll" class="scroll">
-      <li v-for="(singer,index) in singers" :key="index" ref="singerGroup"       @touchmove="activeAside" :item-index2="index" @touchstart="activeAside">
+      <li v-for="(singer,index) in singers" :key="index" ref="singerGroup" @touchmove="activeAside" :item-index2="index" @touchstart="activeAside">
         <p :item-index3="index">{{singer.title}}</p>
         <ul class="singer-list">
-          <router-link :to="`/singer/${item.id}`"  tag="li" v-for="(item,index2) in singer.items" :key="index2">
+          <router-link :to="`/singer/${item.id}`" tag="li" v-for="(item,index2) in singer.items" :key="index2">
             <img v-lazy="item.avater">
             <span>{{item.name}}</span>
           </router-link>
@@ -55,7 +55,8 @@ export default {
       let map = { hot: { title: HOT, items: [] } }
 
       list.forEach((item, index) => {
-        if (index < HOT_LENGTH) { // 创建热门歌手列表
+        if (index < HOT_LENGTH) {
+          // 创建热门歌手列表
           map.hot.items.push(
             new Singer({
               id: item.Fsinger_mid,
@@ -65,7 +66,8 @@ export default {
         }
         const key = item.Findex
 
-        if (!map[key]) {  // 创建a-z首字母的每个姓氏歌手列表
+        if (!map[key]) {
+          // 创建a-z首字母的每个姓氏歌手列表
           map[key] = { title: key, items: [] }
         }
         map[key].items.push(
@@ -112,7 +114,10 @@ export default {
       let distance = ((this.touch.y2 - this.touch.y1) / ITEM_HEIGHT) | 0 // number| 0 ===向下取整
       let targetY = distance + index
       targetY = targetY < 0 ? 0 : targetY
-      targetY = targetY > this.toElement.length - 1 ? this.toElement.length - 1  : targetY
+      targetY =
+        targetY > this.toElement.length - 1
+          ? this.toElement.length - 1
+          : targetY
       this.$refs.scroll.scrollTo(0, this.toElement[targetY], true)
       this.isActive = targetY
       // 在滑动过程中滑出去侧边导航时,内容区域会无法滚动,在导航拉到某一区域在内容区域进行了滑动,在点击导航,第一次点击没有没有,第二次才能滚动到相应位置,因为这次滚动还在进行
@@ -143,7 +148,7 @@ export default {
     asideTitle() {
       return this.singers.map(item => item.title.substr(0, 1))
     }
-  },
+  }
 }
 </script>
 

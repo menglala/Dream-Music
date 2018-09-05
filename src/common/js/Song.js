@@ -1,5 +1,4 @@
-import {getLyric} from 'api/index'
-import {Base64} from 'js-base64'
+import { getLyric } from 'api/index'
 
 export class Song {
   constructor({ id, mid, singer, name, album, duration, image, url }) {
@@ -13,20 +12,20 @@ export class Song {
     this.url = url
   }
 
-  _getLyric(){
+  _getLyric() {
     if (this.lyric) {
       return Promise.resolve(this.lyric)
     }
 
-    return new Promise((resolve,reject)=>{
-     getLyric(this.id).then(res=>{
-       if (res.retcode===0) {
-         this.lyric= HtmlDecode(res.lyric) 
-         resolve(this.lyric)
-       }else{
-         reject('获取歌词失败!')
-       }
-     })
+    return new Promise((resolve, reject) => {
+      getLyric(this.id).then(res => {
+        if (res.retcode === 0) {
+          this.lyric = HtmlDecode(res.lyric)
+          resolve(this.lyric)
+        } else {
+          reject(console.log('获取歌词失败!'))
+        }
+      })
     })
   }
 }
@@ -42,7 +41,9 @@ export function createSong(musicData) {
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${
       musicData.albummid
     }.jpg?max_age=2592000`,
-    url: `http://ws.stream.qqmusic.qq.com/C100${musicData.songmid}.m4a?fromtag=46&guid=126548448`
+    url: `http://ws.stream.qqmusic.qq.com/C100${
+      musicData.songmid
+    }.m4a?fromtag=46&guid=126548448`
   })
 }
 
@@ -60,7 +61,7 @@ function singerSlice(singer) {
 
 // 将html实体字符的歌词转译成能解析的格式,歌词已经不是base64的格式了
 function HtmlDecode(str) {
-  var t = document.createElement("div");
-  t.innerHTML = str;
-  return t.textContent || t.innerText;
+  var t = document.createElement('div')
+  t.innerHTML = str
+  return t.textContent || t.innerText
 }

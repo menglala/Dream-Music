@@ -1,12 +1,12 @@
 <template>
   <!-- 页面发生滚动时,触发滚动事件的是singer-detail,所以选择在这里加滚动事件,在 歌曲列表加事件并不能触发 -->
-  <div class="singer-detail" @scroll="scroll">
+  <div class="disc-wrapper" @scroll="scroll">
     <!-- 使用v-if渲染dom,渲染事件延迟了不少,导致拿不到背景图片的高度 -->
-    <div class="bgImg" :style="{backgroundImage:`url(${singer.bgImage})`}" ref="bgImg">
+    <div class="bgImg" :style="{backgroundImage:`url(${disc.imgurl})`}" ref="bgImg">
       <div class="icon" @click="back">
         <i class="icon-back"></i>
       </div>
-      <h1 v-html="singer.name"></h1>
+      <h1 v-html="disc.dissname"></h1>
       <div class="play-wrapper" ref="randomPlay">
         <div class="icon-autoplay" v-if="songsList.length" @click="random">
           <i class="icon-play"></i>
@@ -27,48 +27,42 @@
 </template>
 
 <script>
-import { getSingerInfo } from '../api/index.js'
+import { getDiscSongs } from '../api/index.js'
 import { ERR_OK } from '../api/commonParams.js'
-import SingerInfo from '../common/js/SingerInfo.js'
 import songsList from '../base/songsList'
 import loading from '../base/loading'
-import { mapActions } from 'vuex'
+import { mapActions,mapGetters } from 'vuex'
 import { createSong } from '../common/js/Song.js'
 
 const RETAIN_HEIGHT = 40 // 列表上滑时图片的最低高度
 
 export default {
+  
   data() {
     return {
-      id: '',
-      singer: {},
+      disstid: '',
       songsList: [],
       scrollY: 0,
       imgHeight: 0
     }
   },
+  computed:{
+    ...mapGetters([
+      'disc'
+    ]),
+  },
   created() {
-    this.id = this.$route.params.id
-    if (!this.id) {
-      this.$router.push('/singer')
+    if (!this.disc) {
+      this.$router.push('/recommend')
     }
-    this._getSingerInfo()
+    this.normalizeSongs()
   },
   methods: {
     ...mapActions(['randomPlay']),
-    _getSingerInfo() {
-      getSingerInfo(this.id)
-        .then(res => {
-          if (res.code === ERR_OK) {
-            let singerData = res.data
-            this.songsList = singerData.list
-            this.singer = new SingerInfo({
-              mid: singerData.singer_mid,
-              name: singerData.singer_name
-            })
-          }
-        })
-        .catch(err => console.log(err))
+    normalizeSongs(){
+      getDiscSongs(this.disc.dissid).then(res=>{
+        this.songsList=res.cdlist[0].songlist
+      }).catch(err=>console.log(err))
     },
     random() {
       let songs = []
@@ -78,7 +72,7 @@ export default {
       this.randomPlay({ list: songs })
     },
     back() {
-      this.$router.push('/singer')
+      this.$router.push('/recommend')
     },
     scroll(e) {
       let target = e.target
@@ -139,7 +133,7 @@ export default {
   width: 100%;
   z-index: 50;
 }
-.singer-detail {
+.disc-wrapper {
   position: fixed;
   top: 0;
   left: 0;
@@ -216,3 +210,4 @@ export default {
   z-index: 50;
 }
 </style>
+

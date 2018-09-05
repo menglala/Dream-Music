@@ -14,6 +14,30 @@ export let getRecommend=()=>{
   return jsonp(url,data,options)
 }
 
+export function getDiscList() {
+  const url = '/getDiscList' //原视频中是 '/api/getDiscList'
+  const data = Object.assign({}, commonParams, {
+    picmid: 1,
+    rnd: Math.random(),
+    loginUin: 0,
+    hostUin: 0,
+    format: 'json',
+    notice: 0,
+    platform: 'yqq',
+    needNewCode: 0,
+    categoryId: 10000000,
+    sortId: 5,
+    sin: 0,
+    ein: 29
+  })
+
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
 export let getSingerlist=()=>{
   let url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
 
@@ -53,15 +77,6 @@ export function getLyric(id) {
   const url='/lyric'
 
   const data = Object.assign({}, {}, {
-    // songmid: songmid,
-    // platform: 'yqq',
-    // hostUin: 0,
-    // needNewCode: 0,
-    // categoryId: 10000000,
-    // pcachetime: +new Date(),
-    // format: 'json',
-    // needNewCode: 0,
-    // g_tk: 1928093487
     nobase64: 1,
     musicid: id, //不再是mid
     songtype: 0
@@ -72,5 +87,27 @@ export function getLyric(id) {
   })
 }
 
-// callback: MusicJsonCallback_lrc
-// jsonpCallback: MusicJsonCallback_lrc
+export function getDiscSongs(disstid) {
+  const url = '/getDiscSongs'
+
+  const data = Object.assign({}, commonParams, {
+    format: 'json',
+    needNewCode: 1,
+    disstid: disstid,
+    type: 1,
+    json: 1,
+    utf8: 1,
+    onlysong: 0,
+    g_tk: 1800233000,
+    platform: 'yqq',
+    needNewCode: 0,
+    onlysong: 0,
+    notice: 0
+  })
+
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

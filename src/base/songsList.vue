@@ -2,8 +2,7 @@
   <div class="wrapper">
     <div class="songs-list">
       <ul>
-        <li v-for="(song, index) in musicList" :key="index" 
-          @click="selectSong(musicList,index)">
+        <li v-for="(song, index) in musicList" :key="index" @click="selectSong(musicList,index)">
           <div class="rank"></div>
           <div class="songText">
             <h2>{{song.name}}</h2>
@@ -17,7 +16,7 @@
 
 <script>
 import { createSong } from '../common/js/Song.js'
-import {mapActions} from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   props: {
@@ -40,18 +39,20 @@ export default {
   methods: {
     normalizeList() {
       this.songsList.forEach(item => {
-        this.musicList.push(createSong(item.musicData))
+        if (item.musicData) {
+          this.musicList.push(createSong(item.musicData))
+        } else {
+          this.musicList.push(createSong(item))
+        }
       })
     },
     describe(singer, name) {
       return `${singer} - ${name}`
     },
-    selectSong(songs,index){
-      this.selectPlay({list:songs,index:index})
+    selectSong(songs, index) {
+      this.selectPlay({ list: songs, index: index })
     },
-    ...mapActions([
-      'selectPlay'
-    ])
+    ...mapActions(['selectPlay'])
   }
 }
 </script>

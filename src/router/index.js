@@ -15,7 +15,10 @@ export default new Router({
     },
     {
       path: '/recommend',
-      component: () => import('../components/recommend.vue')
+      component: () => import('../components/recommend.vue'),
+      children:[
+        {path:':id',component:()=>import('../components/disc.vue')}
+      ]
     },
     {
       path: '/singer',
