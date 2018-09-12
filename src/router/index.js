@@ -16,8 +16,8 @@ export default new Router({
     {
       path: '/recommend',
       component: () => import('../components/recommend.vue'),
-      children:[
-        {path:':id',component:()=>import('../components/disc.vue')}
+      children: [
+        { path: ':id', component: () => import('../components/disc.vue') }
       ]
     },
     {
@@ -32,7 +32,10 @@ export default new Router({
     },
     {
       path: '/rank',
-      component: () => import('../components/rank.vue')
+      component: () => import('../components/rank.vue'),
+      children: [
+        { path: ':id', component: () => import('../components/top-list.vue') }
+      ]
     },
     {
       path: '/search',

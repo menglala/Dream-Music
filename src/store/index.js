@@ -16,6 +16,8 @@ const state = {
   playList: [], // 歌曲播放列表
   mode: playMode.sequence, // 播放的模式 (顺序,随机,循环)
   disc:{},
+  topList:{},
+  query:'',
 }
 
 const store = new Vuex.Store({

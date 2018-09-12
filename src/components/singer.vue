@@ -11,7 +11,7 @@
         </ul>
       </li>
     </scroller>
-    <ul class="aside" ref="aside" @touchstart="asideclick" @touchmove.stop.prevent="asideMove">
+    <ul class="aside" ref="aside" @touchstart.stop.prevent="asideclick" @touchmove.stop.prevent="asideMove">
       <li v-for="(title,index) in asideTitle" :key="index" :item-index="index" :class="{linkactive:index===isActive}">{{title}}</li>
     </ul>
     <router-view></router-view>

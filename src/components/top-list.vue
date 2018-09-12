@@ -1,11 +1,10 @@
 <template>
-  <div class="disc-wrapper" @scroll="scroll">
-    <!-- 使用v-if渲染dom,渲染事件延迟了不少,导致拿不到背景图片的高度 -->
-    <div class="bgImg" :style="{backgroundImage:`url(${disc.imgurl})`}" ref="bgImg">
+  <div class="top-songs-wrapper" @scroll="scroll">
+    <div class="bgImg" :style="{backgroundImage:`url(${topList.picUrl})`}" ref="bgImg">
       <div class="icon" @click="back">
         <i class="icon-back"></i>
       </div>
-      <h1 v-html="disc.dissname"></h1>
+      <h1 v-html="topList.topTitle"></h1>
       <div class="play-wrapper" ref="randomPlay">
         <div class="icon-autoplay" v-if="songsList.length" @click="random">
           <i class="icon-play"></i>
@@ -17,7 +16,7 @@
     </div>
 
     <div class="listWrapper" ref="musicList">
-      <songs-list :songsList="songsList"></songs-list>
+      <songs-list :songsList="songsList" :showRank="showRank"></songs-list>
     </div>
     <div class="loading-wrapper" v-if="!songsList.length">
       <loading></loading>
@@ -26,11 +25,12 @@
 </template>
 
 <script>
-import { getDiscSongs } from '../api/index.js'
+import { getTopSongs} from '../api/index.js'
 import { ERR_OK } from '../api/commonParams.js'
+import SingerInfo from '../common/js/SingerInfo.js'
 import songsList from '../base/songsList'
 import loading from '../base/loading'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions ,mapGetters} from 'vuex'
 import { createSong } from '../common/js/Song.js'
 
 const RETAIN_HEIGHT = 40 // 列表上滑时图片的最低高度
@@ -38,40 +38,44 @@ const RETAIN_HEIGHT = 40 // 列表上滑时图片的最低高度
 export default {
   data() {
     return {
-      disstid: '',
+      id: '',
       songsList: [],
       scrollY: 0,
-      imgHeight: 0
+      imgHeight: 0,
+      showRank:true
     }
   },
-  computed: {
-    ...mapGetters(['disc'])
+  computed:{
+    ...mapGetters([
+      'topList'
+    ])
   },
   created() {
-    this.normalizeSongs()
+   this._getTopSongs()
   },
   methods: {
     ...mapActions(['randomPlay']),
-    normalizeSongs() {
-      if (!this.disc.dissid) {
-        this.$router.push('/recommend')
-        return
-      }
-      getDiscSongs(this.disc.dissid)
-        .then(res => {
-          this.songsList = res.cdlist[0].songlist
-        })
-        .catch(err => console.log(err))
+    _getTopSongs(){
+      if (!this.topList.id) {
+         this.$router.push('/rank')
+         return 
+         
+       }
+      getTopSongs(this.topList.id).then(res=>{
+        if (res.code===ERR_OK) {
+          this.songsList=res.songlist
+        }
+      })
     },
     random() {
       let songs = []
       this.songsList.forEach(item => {
-        songs.push(createSong(item))
+        songs.push(createSong(item.data))
       })
       this.randomPlay({ list: songs })
     },
     back() {
-      this.$router.push('/recommend')
+      this.$router.push('/rank')
     },
     scroll(e) {
       let target = e.target
@@ -132,7 +136,7 @@ export default {
   width: 100%;
   z-index: 50;
 }
-.disc-wrapper {
+.top-songs-wrapper {
   position: fixed;
   top: 0;
   left: 0;
@@ -209,4 +213,3 @@ export default {
   z-index: 50;
 }
 </style>
-

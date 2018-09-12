@@ -21,6 +21,12 @@ let mutations = {
   },
   [types.SET_DISC](state, disc) {
     state.disc = disc
+  },
+  [types.SET_TOP_LIST](state, list) {
+    state.topList = list
+  },
+  [types.SET_QUERY](state,query){
+    state.query=query
   }
 }
 

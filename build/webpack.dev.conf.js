@@ -261,7 +261,30 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             .catch(e => {
               console.log(e)
             })
-        })
+        }),
+          app.get('/search', function (req, res) {
+          var url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+            axios
+              .get(url, {
+                headers: {
+                  referer: 'https://i.y.qq.com/',
+                  host: 'c.y.qq.com'
+                },
+                params: req.query
+              })
+              .then(response => {
+                let ret = response.data
+                if (typeof response.data === 'string') {
+                  let reg = /^\w+\(({[^()]+})\)$/
+                  let matches = ret.match(reg)
+                  if (matches) ret = JSON.parse(matches[1])
+                }
+                res.json(ret)
+              })
+              .catch(e => {
+                console.log(e)
+              })
+          })
     }
   },
   plugins: [

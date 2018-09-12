@@ -8,7 +8,9 @@ let getters = {
   currentSong: state => {
     return state.playList[state.currentIndex] || {}
   },
-  disc: state => state.disc
+  disc: state => state.disc,
+  topList:state=>state.topList,
+  query:state=>state.query,
 }
 
 export default getters
