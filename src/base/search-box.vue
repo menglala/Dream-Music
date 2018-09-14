@@ -1,13 +1,14 @@
 <template>
   <div class="icon search-box">
     <i class="icon-search"></i>
-    <input type="text" :placeholder="placeholder" v-model="query">
+    <input type="text" :placeholder="placeholder" v-model="query" ref="queryInp">
     <i class="icon-dismiss" @click="clearSearch" v-show="query"></i>
   </div>
 </template>
 
 <script>
 import {mapMutations} from 'vuex'
+import {debounce} from '../common/js/util.js'
 
 export default {  
   props:{
@@ -20,9 +21,10 @@ export default {
     return{ query:'',}
   },
   created() {
-    this.$watch('query',(newVal)=>{
+    // 使用了debounce节流函数,在每次修改搜索词的时候会延迟发送请求并清空未发送的请求,节约流量
+    this.$watch('query', debounce((newVal)=>{
       this.$emit('query',newVal)
-    })
+    },200)) 
   },
   methods:{
     clearSearch(){
@@ -30,6 +32,9 @@ export default {
     },
     setQuery(text){
       this.query=text
+    },
+    blur(){
+      this.$refs.queryInp.blur()
     }
   }
 }

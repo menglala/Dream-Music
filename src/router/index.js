@@ -39,7 +39,10 @@ export default new Router({
     },
     {
       path: '/search',
-      component: () => import('../components/search.vue')
+      component: () => import('../components/search.vue'),
+      children:[{
+        path:':id',component:()=>import('../components/singerDetail.vue')
+      }]
     }
   ]
 })

@@ -5,6 +5,7 @@ import getters from './getter'
 import * as actions from './actions'
 import mutations from './mutations'
 import playMode from '../common/js/playMode'
+import { loadSearchHistory } from '../common/js/cache'
 
 Vue.use(Vuex)
 
@@ -18,6 +19,7 @@ const state = {
   disc:{},
   topList:{},
   query:'',
+  searchHistory:loadSearchHistory(),
 }
 
 const store = new Vuex.Store({

@@ -1,7 +1,14 @@
 <template>
-  <scroll class="suggest-box" @scrollToEnd="_searchMove" :pullup="pullup" ref="scroller" :data="result">
+  <scroll 
+    class="suggest-box"
+    @scrollToEnd="_searchMove" 
+    :pullup="pullup" 
+    ref="scroller" 
+    :data="result" 
+    :beforeScroll="beforeScroll" 
+    @beforeScroll="listScroll">
     <div class="suggest-list">
-      <li v-for="(item, index) in result" :key="index">
+      <li v-for="(item, index) in result" :key="index" @click="selectItem(item)">
         <div class="icon">
           <i :class="getIconCls(item)"></i>
         </div>
@@ -11,6 +18,9 @@
         <loading v-show="hasMore" title=""></loading>
       </div>
     </div>
+    <div class="no-result-wrapper" v-show="!hasMore&&!result.length">
+      <no-result  title="抱歉 ! 暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 
@@ -19,6 +29,8 @@ import { search } from '../api/index.js'
 import { createSong } from '../common/js/Song.js'
 import scroll from '../base/scroll'
 import loading from '../base/loading'
+import {mapActions} from 'vuex'
+import noResult from '../base/no-result'
 
 const perpage = 20
 
@@ -34,12 +46,26 @@ export default {
     }
   },
   data() {
-    return { page: 1, result: [], hasMore: true,flag:true,pullup:true, }
+    return { page: 1, result: [], hasMore: true,flag:true,pullup:true,beforeScroll:true, }
   },
   created() {
     this._search()
   },
   methods: {
+    ...mapActions([
+      'insertSong'
+    ]),
+    listScroll(){
+      this.$emit('listenScroll')
+    },
+    selectItem(item){
+      if (item.TYPE==='singer') {
+        this.$router.push(`/search/${item.singermid}`)
+      }else{
+        this.insertSong(item)
+      }
+      this.$emit('select',this.query)
+    },
     _searchMove() {
       if (!this.hasMore||!this.flag) {
         return
@@ -106,12 +132,18 @@ export default {
     }
   },
   components: {
-    loading,scroll,
+    loading,scroll,noResult
   }
 }
 </script>
 
 <style lang="less" scoped>
+.no-result-wrapper{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width:100%;
+}
 .suggest-box {
   width: 100%;
   overflow: hidden;

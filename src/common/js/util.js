@@ -13,3 +13,17 @@ export function shuffle(arr) {
   }
   return randomArr
 }
+
+// 节流函数
+export function debounce(func, delay) {
+  let timer
+  return function(...args) {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      // this===search-box这个组件 ,args是传入的搜索词,是匿名函数的arguments
+      func.apply(this, args)
+    }, delay)
+  }
+}

@@ -9,8 +9,8 @@
           <div class="icon" @click="back">
             <i class="icon-back"></i>
           </div>
-          <h1>{{currentSong.name}}</h1>
-          <h2>{{currentSong.singer}}</h2>
+          <h1 v-html="currentSong.name"></h1>
+          <h2 v-html="currentSong.singer"></h2>
         </div>
         <div class="middle" @touchstart="middleTouchStart" @touchmove="middleTouchMove" @touchend="middleTouchEnd">
           <div class="middle-left" ref="middleCd">
@@ -68,8 +68,8 @@
           <img :src="currentSong.image" :class="cdRotate">
         </div>
         <div class="text">
-          <h2>{{currentSong.name}} </h2>
-          <span>{{currentSong.singer}} </span>
+          <h2 v-html="currentSong.name"></h2>
+          <span v-html="currentSong.singer"></span>
         </div>
         <div class="icon-contral" @click.stop="togglePlaying">
           <progress-circle :percent="percent" :radius="radius">

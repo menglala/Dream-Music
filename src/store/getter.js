@@ -11,6 +11,7 @@ let getters = {
   disc: state => state.disc,
   topList:state=>state.topList,
   query:state=>state.query,
+  searchHistory:state=>state.searchHistory,
 }
 
 export default getters

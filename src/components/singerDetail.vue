@@ -57,8 +57,7 @@ export default {
   methods: {
     ...mapActions(['randomPlay']),
     _getSingerInfo() {
-      getSingerInfo(this.id)
-        .then(res => {
+      getSingerInfo(this.id).then(res => {
           if (res.code === ERR_OK) {
             let singerData = res.data
             this.songsList = singerData.list
@@ -78,7 +77,7 @@ export default {
       this.randomPlay({ list: songs })
     },
     back() {
-      this.$router.push('/singer')
+      this.$router.back()
     },
     scroll(e) {
       let target = e.target
