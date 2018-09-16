@@ -55,12 +55,11 @@
               <i class="icon-next right" @click.stop.prevent="next"></i>
             </div>
             <div class="icon-right">
-              <i class="icon-favorite right"></i>
+              <i class="icon-not-favorite right"></i>
             </div>
           </div>
         </div>
       </div>
-
     </transition>
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
@@ -76,13 +75,14 @@
             <i :class="playIcon" class="mini-play-btn"></i>
           </progress-circle>
         </div>
-        <div class="icon-contral">
+        <div class="icon-contral" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
     <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end">
     </audio>
+    <playlist ref="playlist"></playlist>
   </div>
 </template>
 
@@ -94,6 +94,7 @@ import progressCircle from '../base/progressCircle'
 import playMode from '../common/js/playMode.js'
 import { shuffle } from '../common/js/util.js'
 import Lyric from 'lyric-parser'
+import playlist from '../components/playlist'
 import Vue from 'vue'
 import VueScroller from 'vue-scroller'
 Vue.use(VueScroller)
@@ -166,6 +167,9 @@ export default {
       setPlayMode: 'SET_PLAY_MODE',
       setPlayList: 'SET_PLAY_LIST'
     }),
+     showPlaylist(){
+      this.$refs.playlist.show()
+    },
     middleTouchStart(e){
       this.initiate=true
       this.touch.startX=e.touches[0].pageX
@@ -405,7 +409,8 @@ export default {
   },
   components: {
     progressBar,
-    progressCircle
+    progressCircle,
+    playlist,
   }
 }
 </script>

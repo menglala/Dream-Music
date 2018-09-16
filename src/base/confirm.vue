@@ -53,13 +53,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.confirm-fade-enter-active {
+  animation: confirm-fadein 0.3s;
+}
+.confirm-content {
+  animation: confirm-zoom 0.3s;
+}
 .confirm {
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,.3);
+  background-color: rgba(0, 0, 0, 0.3);
   z-index: 300;
 }
 .confirm-wrapper {
@@ -96,6 +102,26 @@ export default {
   }
   .cancel {
     border-left: 1px solid rgba(0, 0, 0, 0.3);
+  }
+  @keyframes confirm-fadein {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes confirm-zoom {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 }
 </style>

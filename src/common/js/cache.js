@@ -16,7 +16,7 @@ function insertArray(arr, val, compare, maxLength) {
 
 function deleteArray(arr,compare) {
   const index=arr.findIndex(compare)
-  if (index-1) {
+  if (index>-1) {
     arr.splice(index,1)
   }
 }
