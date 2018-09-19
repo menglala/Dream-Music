@@ -36,7 +36,7 @@
     <div class="search-result" v-show="query">
       <suggest :query="query" @listenScroll="blurInp" @select="saveSearchHistory"></suggest>
     </div>
-     <confirm ref="confirm" @confirm="clearSearchHistory" text="确定要所有清空历史记录吗?" confirmText="清空"></confirm>
+    <confirm ref="confirm" @confirm="clearSearchHistory" text="确定要所有清空历史记录吗?" confirmText="清空"></confirm>
     <router-view></router-view>
   </div>
 </template>
@@ -45,11 +45,13 @@
 import searchBox from '../base/search-box'
 import suggest from '../components/suggest'
 import { getHotKey } from '../api/index.js'
-import { mapMutations, mapGetters, mapActions } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import scroll from '../base/scroll'
 import confirm from '../base/confirm'
+import { searchMixin } from '../common/js/mixin.js'
 
 export default {
+  mixins: [searchMixin],
   data() {
     return { hotkeys: [], query: '', showFlag: false }
   },
@@ -57,23 +59,13 @@ export default {
     this._getHotKey()
   },
   computed: {
-    ...mapGetters(['searchHistory']),
     shortcut() {
       return this.hotkeys.concat(this.searchHistory)
     }
   },
   methods: {
-    ...mapActions([
-      'saveSearchHistory',
-      'deleteSearchHistory',
-      'clearSearchHistory'
-    ]),
-    blurInp() {
-      this.$refs.searchBox.blur()
-    },
+    ...mapActions(['clearSearchHistory']),
     showConfirm() {
-      console.log(this.$refs.confirm)
-
       this.$refs.confirm.show()
     },
     _getHotKey() {
@@ -83,12 +75,7 @@ export default {
         }
       })
     },
-    addQuery(item) {
-      this.query = item
-      // 点击热门搜索时,搜索框自动补充搜索热词
-      this.$refs.searchBox.setQuery(item)
-      this.saveSearchHistory(item)
-    },
+
     queryChange(text) {
       this.query = text
     }

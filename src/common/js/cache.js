@@ -55,3 +55,20 @@ export function clearSearch() {
   storage.remove(SEARCH_KEY)
   return []
 }
+
+export function savePlay(song) {
+  const PLAY_KEY='_play_'
+  const PLAY_KEY_LENGTH=200
+
+  let songs=storage.get(PLAY_KEY,[])
+  insertArray(songs,song,item => {
+    return item.id === song.id
+  }, PLAY_KEY_LENGTH)
+  storage.set(PLAY_KEY, songs)
+  return songs
+}
+
+export function loadPlayHistory() {
+  const PLAY_KEY = '_play_'
+  return storage.get(PLAY_KEY, [])
+}

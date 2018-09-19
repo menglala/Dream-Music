@@ -2,3 +2,4 @@
 2.歌手列表滑动时,transform未完成时点击导航的快速入口没反应
 3.scroller滑至最底部时,会回弹一段距离
   解决:将动态获取的数据:data="数据"传入scroll组件,让better-scroll组件内部根据传入的数据的变化动态计算DOM
+4.选项卡切换时,v-if和 v-else使用会影响scroll初始化失败

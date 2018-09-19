@@ -103,7 +103,10 @@ export default {
     _search() {
       this.page = 1
       this.hasMore=true
-      this.$refs.scroller.scrollTo(0,0)
+      // 如果上次查询滚动到一定距离,下一次查询要重置scroll的滚动值
+      setTimeout(() => {
+        this.$refs.scroller.scrollTo(0,0)
+      }, 20);
       search(this.query, this.page, this.showSinger, perpage).then(res => {
         this.result = this.getResult(res.data)
       })

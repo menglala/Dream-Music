@@ -20,7 +20,6 @@
 <script>
 import { createSong } from '../common/js/Song.js'
 import { mapActions } from 'vuex'
-
 export default {
   props: {
     songsList: {

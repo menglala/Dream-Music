@@ -3,29 +3,29 @@
     <div class="list-wrapper" @click.stop>
       <div class="list-header">
         <h1 class="icon">
-          <i :class="getPlayModeIcon"></i>
+          <i :class="iconMode" @click="changeMode"></i>
           <span class="text">{{modeText}}</span>
-          <span class="clear">
+          <span class="clear" @click.stop="showConfirm">
             <i class="icon-clear"></i>
           </span>
         </h1>
       </div>
       <scroll class="list-content" ref="scrollList" :data="sequenceList">
-        <transition-group class="list" tag="ul">
+        <transition-group class="list" tag="ul" name="songs">
           <li v-for="(item, index) in sequenceList" :key="index" class="icon" ref="listItems" @click="selectItem(item,index)">
             <i :class="getCurrentIcon(item)" class="current"></i>
             <span class="text" v-html="item.name"></span>
             <span class="like">
               <i class="icon-not-favorite"></i>
             </span>
-            <span class="delete" @click.stop.prevent="deleteItem(item)">
+            <span class="delete" @click.stop="deleteItem(item)">
               <i class="icon-delete"></i>
             </span>
           </li>
         </transition-group>
       </scroll>
       <div class="list-operate">
-        <div class="icon add">
+        <div class="icon add" @click="showAddSong">
           <i class="icon-add"></i>
           <span class="text">添加歌曲到队列</span>
         </div>
@@ -34,20 +34,27 @@
         <span class="text">关闭</span>
       </div>
     </div>
+    <div class="confirm-wrapper" @click.stop>
+      <confirm ref="confirm" text="确定要清空歌曲列表吗?" @confirm="deleteSongslist"></confirm>
+    </div>
+    <add-song ref="addSong"></add-song>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapActions, } from 'vuex'
 import scroll from '../base/scroll'
 import playMode from '../common/js/playMode.js'
+import confirm from '../base/confirm'
+import {playMixin} from '../common/js/mixin.js'
+import addSong from '../components/add-song'
 
 export default {
+  mixins:[playMixin],
   data() {
     return { showFlag: false }
   },
   computed: {
-    ...mapGetters(['sequenceList', 'currentSong', 'mode', 'playList']),
     getPlayModeIcon() {
       return this.mode === playMode.random
         ? 'icon-random'
@@ -60,11 +67,17 @@ export default {
     }
   },
   methods: {
-    ...mapMutations({
-      setCurrentIndex: 'SET_CURRENT_INDEX',
-      setPlayState: 'SET_PLAYING_STATE'
-    }),
-    ...mapActions(['deleteSong']),
+    ...mapActions(['deleteSong','clearSongslist']),
+    showAddSong(){
+      this.$refs.addSong.show()
+    },
+    showConfirm(){
+      this.$refs.confirm.show()
+    },
+    deleteSongslist(){
+      this.clearSongslist()
+      this.hide()
+    },
     deleteItem(item) {
       this.deleteSong(item)
       if (!this.playList.length) {
@@ -97,23 +110,33 @@ export default {
         })
       }
       this.setCurrentIndex(index)
-      this.setPlayState(true)
+      this.setPlayingState(true)
     }
   },
   watch: {
     currentSong(newSong, oldSong) {
-      if (!newSong || newSong.id === oldSong.id) {
+      if (!newSong.id || newSong.id === oldSong.id) {
         return
       }
       this.getCurrentIcon(newSong)
-      this.scrollToCurrent(newSong)
+      setTimeout(() => {
+        this.scrollToCurrent(newSong)
+      }, 20)
     }
   },
-  components: { scroll }
+  components: { scroll,confirm,addSong }
 }
 </script>
 
 <style lang="less" scoped>
+.songs-enter-active,
+.songs-leave-active {
+  transition: all 0.1s;
+}
+.songs-enter,
+.songs-leave-to {
+  height: 0;
+}
 .playlist {
   position: fixed;
   left: 0;
@@ -153,21 +176,13 @@ export default {
   .list-content {
     max-height: 240px;
     overflow: hidden;
-      &.list-enter-active,
-      &.list-leave-active {
-        transition: all 0.1s;
-      }
-      &.list-enter,
-      &.list-leave-to {
-        height: 0;
-      }
     .list li {
       display: flex;
       height: 40px;
       align-items: center;
       padding: 0 30px 0 20px;
       overflow: hidden;
-    
+
       i {
         width: 20px;
         font-size: 12px;

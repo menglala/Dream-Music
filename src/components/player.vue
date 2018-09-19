@@ -87,20 +87,21 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import animations from 'create-keyframe-animation'
 import progressBar from '../base/progressBar'
 import progressCircle from '../base/progressCircle'
 import playMode from '../common/js/playMode.js'
-import { shuffle } from '../common/js/util.js'
 import Lyric from 'lyric-parser'
 import playlist from '../components/playlist'
+import { playMixin } from '../common/js/mixin.js'
 import Vue from 'vue'
 import VueScroller from 'vue-scroller'
 Vue.use(VueScroller)
 
 export default {
   name: 'player',
+  mixins: [playMixin],
   data() {
     return {
       songReady: false,
@@ -109,20 +110,12 @@ export default {
       currentShow: 'cd',
       currentLyric: {},
       currentLine: 0,
-      initiate:false,
-      playLyric:'',
+      initiate: false,
+      playLyric: ''
     }
   },
   computed: {
-    ...mapGetters([
-      'playing',
-      'fullScreen',
-      'sequenceList',
-      'playList',
-      'currentSong',
-      'currentIndex',
-      'mode'
-    ]),
+    ...mapGetters(['playing', 'fullScreen', 'currentIndex']),
     playIcon() {
       return this.playing ? 'icon-pause' : 'icon-play'
     },
@@ -131,12 +124,7 @@ export default {
     },
     percent() {
       return this.currentTime / this.currentSong.duration
-    },
-    iconMode() {
-      return this.mode === playMode.random
-        ? 'icon-random'
-        : this.mode === playMode.sequence ? 'icon-sequence' : 'icon-loop'
-    },
+    }
   },
   watch: {
     currentSong(oldSong, newSong) {
@@ -160,68 +148,69 @@ export default {
     this.touch = {}
   },
   methods: {
-    ...mapMutations({
-      setFullScreen: 'SET_FULLSCREEN',
-      setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX',
-      setPlayMode: 'SET_PLAY_MODE',
-      setPlayList: 'SET_PLAY_LIST'
-    }),
-     showPlaylist(){
+    ...mapActions(['savePlayHistory']),
+    showPlaylist() {
       this.$refs.playlist.show()
     },
-    middleTouchStart(e){
-      this.initiate=true
-      this.touch.startX=e.touches[0].pageX
-      this.touch.startY=e.touches[0].pageY
+    middleTouchStart(e) {
+      this.initiate = true
+      this.touch.startX = e.touches[0].pageX
+      this.touch.startY = e.touches[0].pageY
     },
-    middleTouchMove(e){
+    middleTouchMove(e) {
       if (!this.initiate) {
         return
       }
-      const deltaX=e.touches[0].pageX-this.touch.startX
-      const deltaY=e.touches[0].pageY-this.touch.startY
+      const deltaX = e.touches[0].pageX - this.touch.startX
+      const deltaY = e.touches[0].pageY - this.touch.startY
 
-      if ( Math.abs(deltaY) > Math.abs(deltaX) ) {
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
         return
       }
 
-      const baseLeft=this.currentShow==='cd'?0:-window.innerWidth
-      const offsetWidth=Math.min(0,Math.max(-window.innerWidth,baseLeft+deltaX))
-      this.touch.percent=Math.abs(offsetWidth/window.innerWidth)
-      this.$refs.lyricList.$el.style['transform']=`translate3d(${offsetWidth}px,0,0)`
-      this.$refs.lyricList.$el.style['transformDuration']=0
-      this.$refs.middleCd.style.opacity=1-this.touch.percent
-      this.$refs.middleCd.style['transformDuration']=0
+      const baseLeft = this.currentShow === 'cd' ? 0 : -window.innerWidth
+      const offsetWidth = Math.min(
+        0,
+        Math.max(-window.innerWidth, baseLeft + deltaX)
+      )
+      this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
+      this.$refs.lyricList.$el.style[
+        'transform'
+      ] = `translate3d(${offsetWidth}px,0,0)`
+      this.$refs.lyricList.$el.style['transformDuration'] = 0
+      this.$refs.middleCd.style.opacity = 1 - this.touch.percent
+      this.$refs.middleCd.style['transformDuration'] = 0
     },
-    middleTouchEnd(e){
-      let offsetWidth,opacity
-      const time=300
+    middleTouchEnd(e) {
+      let offsetWidth, opacity
+      const time = 300
 
-      if (this.currentShow==='cd') {
-        if (this.touch.percent>0.1) {
-          this.currentShow='lyric'
-          offsetWidth=-window.innerWidth
-          opacity=0
-        }else{
-          offsetWidth=0
-          opacity=1
+      if (this.currentShow === 'cd') {
+        if (this.touch.percent > 0.1) {
+          this.currentShow = 'lyric'
+          offsetWidth = -window.innerWidth
+          opacity = 0
+        } else {
+          offsetWidth = 0
+          opacity = 1
         }
-      }else{
-        if (this.touch.percent<0.9) {
-          this.currentShow='cd'
-          offsetWidth=0
-          opacity=1
-        }else{
-          offsetWidth=-window.innerWidth
-          opacity=0
+      } else {
+        if (this.touch.percent < 0.9) {
+          this.currentShow = 'cd'
+          offsetWidth = 0
+          opacity = 1
+        } else {
+          offsetWidth = -window.innerWidth
+          opacity = 0
         }
       }
-      this.$refs.lyricList.$el.style['transform']=`translate3d(${offsetWidth}px,0,0)`
-      this.$refs.lyricList.$el.style['transformDuration']=time+'ms'
-      this.$refs.middleCd.style.opacity=opacity
-      this.$refs.middleCd.style['transformDuration']=time+'ms'
-      this.initiate=false
+      this.$refs.lyricList.$el.style[
+        'transform'
+      ] = `translate3d(${offsetWidth}px,0,0)`
+      this.$refs.lyricList.$el.style['transformDuration'] = time + 'ms'
+      this.$refs.middleCd.style.opacity = opacity
+      this.$refs.middleCd.style['transformDuration'] = time + 'ms'
+      this.initiate = false
     },
     handleLyric(lineNum, txt) {
       this.currentLine = this.currentLyric.curNum - 1
@@ -233,44 +222,25 @@ export default {
           this.$refs.lyricList.scrollTo(0, 0, true)
         }
       }
-      this.playLyric=this.currentLyric.lines[this.currentLine].txt
+      this.playLyric = this.currentLyric.lines[this.currentLine].txt
     },
     getLyric() {
-      this.currentSong._getLyric().then(res => {
-        this.currentLyric = new Lyric(res, this.handleLyric)
-        if (this.playList) {
-          this.currentLyric.play()
-        }
-      })
+      setTimeout(() => {
+        this.currentSong._getLyric().then(res => {
+          this.currentLyric = new Lyric(res, this.handleLyric)
+          if (this.playList) {
+            this.currentLyric.play()
+          }
+        })
+      }, 20)
     },
-    changeMode() {
-      const mode = (this.mode + 1) % 3 // 对3取余
-      this.setPlayMode(mode)
-      let list = []
 
-      if (this.mode === playMode.random) {
-        list = shuffle(this.sequenceList)
-      } else {
-        list = this.sequenceList
-      }
-      this.resetIndex(list)
-      this.setPlayList(list)
-    },
-    resetIndex(list) {
-      let index = list.findIndex(item => {
-        return item.id === this.currentSong.id
-      })
-
-      return this.setCurrentIndex(index)
-    },
     changePercent(newPercent) {
       this.$refs.audio.currentTime = newPercent * this.currentSong.duration
-      
       if (!this.playing) {
         this.togglePlaying()
       }
-
-      this.currentLyric.seek(this.$refs.audio.currentTime*1000)
+      this.currentLyric.seek(this.$refs.audio.currentTime * 1000)
     },
     updateTime(e) {
       this.currentTime =
@@ -336,7 +306,8 @@ export default {
       this.songReady = false
     },
     ready() {
-      this.songReady = true // 快速切换时,避免歌曲未缓冲造成的无法加载歌曲,只有歌曲缓冲完成才能切换
+      this.songReady = true // 快速切换时,避免歌曲未缓冲造成的无法加载歌曲,只有歌曲缓冲完成才能切换,
+      this.savePlayHistory(this.currentSong)
     },
     error() {
       this.songReady = true // 网络错误时也可以使用上/下首
@@ -389,7 +360,7 @@ export default {
       this.$refs.cd.style.animation = ''
     },
     leave(el, done) {
-      this.$refs.cd.style.transition = 'all,0.4s'
+      this.$refs.cd.style.transition = 'all 0.4s'
       const { x, y, scale } = this.getPosandScale()
       // 离开的时候从大cd的原始位置(0,0,0)变化到小cd的位置(-x,y,0)
       this.$refs.cd.style[
@@ -398,8 +369,12 @@ export default {
       this.$refs.cd.style[
         `webkitTransform`
       ] = `translate3d(${x}px,${y}px,0) scale(${scale})`
+      const timer = setTimeout(done, 400) 
       // 添加动画完成后回调函数done
-      this.$refs.cd.addEventListener('transitionend', done)
+      this.$refs.cd.addEventListener('transitionend',()=>{
+        clearTimeout(timer)
+        done()
+      })
     },
     afterLeave(el, done) {
       this.$refs.cd.style.transform = ''
@@ -410,14 +385,23 @@ export default {
   components: {
     progressBar,
     progressCircle,
-    playlist,
+    playlist
   }
 }
 </script>
 
 <style lang="less" scoped>
-.player-lyric-wrap{width: 80%;margin: 30px auto;text-align: center;
-.cd-lyric{color: hsla(0, 0%, 100%, 0.5);height: 20px;line-height: 20px;font-size: 14px;overflow: hidden;}
+.player-lyric-wrap {
+  width: 80%;
+  margin: 30px auto;
+  text-align: center;
+  .cd-lyric {
+    color: hsla(0, 0%, 100%, 0.5);
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    overflow: hidden;
+  }
 }
 .middle-right {
   display: inline-block;

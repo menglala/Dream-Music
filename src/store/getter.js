@@ -12,6 +12,7 @@ let getters = {
   topList:state=>state.topList,
   query:state=>state.query,
   searchHistory:state=>state.searchHistory,
+  playHistory:state=>state.playHistory,
 }
 
 export default getters
