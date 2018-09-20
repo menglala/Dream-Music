@@ -196,7 +196,7 @@ export default {
 .aside {
   position: fixed;
   right: 0;
-  top: 140px;
+  top: 120px;
   z-index: 10;
   background: #000;
   border-radius: 30px;
