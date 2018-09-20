@@ -1,22 +1,23 @@
 <template>
-  <div><scroller class="wrap" ref="scroll">
-    <div :on-refresh="refresh" :on-infinite="infinite" class="scroller">
-      <swiper :swiperSlides="this.data.slider"></swiper>
-      <div class="recommend-content">
-        <h1>热门歌单推荐</h1>
-        <ul>
-          <li v-for="(disc,key) in discList" :key="key" @click="selectDisc(disc)">
-            <img :src="disc.imgurl">
-            <div class="text">
-              <strong v-html="disc.creator.name"></strong><br>
-              <span>{{disc.dissname}}</span>
-            </div>
-          </li>
-        </ul>
+  <div class="wrap">
+    <scroll ref="scroll" class="scroller">
+      <div>
+        <swiper :swiperSlides="this.data.slider"></swiper>
+        <div class="recommend-content">
+          <h1>热门歌单推荐</h1>
+          <ul>
+            <li v-for="(disc,key) in discList" :key="key" @click="selectDisc(disc)">
+              <img :src="disc.imgurl">
+              <div class="text">
+                <strong v-html="disc.creator.name"></strong><br>
+                <span>{{disc.dissname}}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-  </scroller>
-  <router-view></router-view>
+    </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -25,16 +26,15 @@ import swiper from '../base/swiper'
 import { getRecommend, getDiscList } from '../api/index.js'
 import { ERR_OK } from '../api/commonParams.js'
 import { mapMutations } from 'vuex'
-import Vue from 'vue'
-import VueScroller from 'vue-scroller'
-Vue.use(VueScroller)
+import scroll from '../base/scroll'
 
 export default {
   data() {
     return { data: {}, discList: [] }
   },
   components: {
-    swiper
+    swiper,
+    scroll
   },
   created() {
     this._getRecommend()
@@ -65,15 +65,6 @@ export default {
           }
         })
         .catch(err => console.log(err))
-    },
-    async refresh(done) {
-      await this._getRecommend() // 下拉更新
-      done() // done()表示这次异步加载数据完成，加载下一次
-    },
-    async infinite() {
-      // 底部加载数据
-      await this._getDiscList()
-      this.$refs.scroll.finishInfinite(true) // 表示停止上拉加载更多，里面是一个boolean参数，说明是否还有更多数据，如果传入true就会显示noDataText里面的字符串了。noDataText就是没有数据后提示的文字
     }
   }
 }
@@ -82,7 +73,9 @@ export default {
 <style lang="less" scoped>  
 @import "../common/less/variable.less";
 //scroller组件定位用relative,否则会溢出父容器
-.wrap{.scroller{position: relative;}; position: fixed;top: 88px;left: 0;width: 100% }
+.wrap{
+  position: fixed;top: 88px;left: 0;width: 100%;bottom:0;overflow: hidden;
+  .scroller{height: 100%;overflow: hidden;}
 .recommend-content {
   width: 100%;
   ul {width: 100%}
@@ -90,5 +83,6 @@ export default {
   .text{ font-size: 14px;margin: 0 0 0 20px; width: calc(100% - 80px);display: inline-block;strong{margin-bottom: 10px;display: inline-block;};span{color: @color-text-l}}}
   h1 { color: @color-theme; text-align: center;  padding: 12px; font-size: 14px;}
   img { width: 60px; height: 60px;}
-}
+  }
+  }
 </style>

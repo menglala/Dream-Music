@@ -17,7 +17,7 @@
         </div>
       </scroll>
       <scroll class="list-scroll" v-show="currentIndex===1" :data="playHistory" ref="historyScroll">
-        <songs :songs="playHistory"></songs>
+        <songs :songs="playHistory" @select="selectItem"></songs>
       </scroll>
     </div>
     <div class="no-result-wrapper" v-show="noResult">
