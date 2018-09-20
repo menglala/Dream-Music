@@ -1,10 +1,16 @@
-import { mapMutations, mapGetters ,mapActions} from 'vuex'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
 import playMode from './playMode.js'
 import { shuffle } from './util.js'
 
 export const playMixin = {
   computed: {
-    ...mapGetters(['sequenceList', 'currentSong', 'mode', 'playList']),
+    ...mapGetters([
+      'sequenceList',
+      'currentSong',
+      'mode',
+      'playList',
+      'favoriteList'
+    ]),
     iconMode() {
       return this.mode === playMode.random
         ? 'icon-random'
@@ -21,6 +27,27 @@ export const playMixin = {
       setPlayMode: 'SET_PLAY_MODE',
       setPlayList: 'SET_PLAY_LIST'
     }),
+    ...mapActions(['deleteFavoriteList', 'saveFavoriteList']),
+    toggleFavorite(item) {
+      if (this.isFavorite(item)) {
+        this.deleteFavoriteList(item)
+      } else {
+        this.saveFavoriteList(item)
+      }
+    },
+    getFavoriteIcon(item) {
+      if (this.isFavorite(item)) {
+        return 'icon-favorite'
+      } else {
+        return 'icon-not-favorite'
+      }
+    },
+    isFavorite(song) {
+      const index = this.favoriteList.findIndex(item => {
+        return item.id === song.id
+      })
+      return index > -1  // 返回布尔值,index>-,否则为false 
+    },
     changeMode() {
       const mode = (this.mode + 1) % 3 // 对3取余
       this.setPlayMode(mode)
@@ -46,7 +73,7 @@ export const playMixin = {
 
 export const searchMixin = {
   computed: {
-    ...mapGetters(['searchHistory']),
+    ...mapGetters(['searchHistory'])
   },
   methods: {
     ...mapActions(['saveSearchHistory', 'deleteSearchHistory']),
@@ -59,6 +86,5 @@ export const searchMixin = {
     blurInp() {
       this.$refs.searchBox.blur()
     }
-  },
- 
+  }
 }

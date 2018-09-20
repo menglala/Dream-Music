@@ -54,8 +54,8 @@
             <div class="icon-right">
               <i class="icon-next right" @click.stop.prevent="next"></i>
             </div>
-            <div class="icon-right">
-              <i class="icon-not-favorite right"></i>
+            <div class="icon-right" @click="toggleFavorite(currentSong)">
+              <i class="right" :class="getFavoriteIcon(currentSong)"></i>
             </div>
           </div>
         </div>

@@ -104,6 +104,7 @@ export default {
   top: 170px;
   bottom: 0px;
   overflow: hidden;
+  width: 100%;
 }
 .search-history {
   margin: 0 20px;

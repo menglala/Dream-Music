@@ -72,3 +72,30 @@ export function loadPlayHistory() {
   const PLAY_KEY = '_play_'
   return storage.get(PLAY_KEY, [])
 }
+
+export function saveFavorite(song) {
+  const FAVORITE_KEY  = '_favorite_'
+  const FAVORITEKEY_KEY_LENGTH = 200
+
+  let songs = storage.get(FAVORITE_KEY, [])
+  insertArray(songs, song, item => {
+    return item.id === song.id
+  }, FAVORITEKEY_KEY_LENGTH)
+  storage.set(FAVORITE_KEY, songs)
+  return songs
+}
+
+export function deleteFavorite(song) {
+  const FAVORITE_KEY = '_favorite_'
+  let songs = storage.get(FAVORITE_KEY, [])
+  deleteArray(songs, item => {
+    return item.id===song.id
+  })
+  storage.set(FAVORITE_KEY, songs)
+  return songs
+}
+
+export function loadFavorite() {
+  const FAVORITE_KEY = '_favorite_'
+  return storage.get(FAVORITE_KEY, [])
+}

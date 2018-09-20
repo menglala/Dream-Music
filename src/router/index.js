@@ -10,10 +10,6 @@ export default new Router({
       redirect: '/recommend'
     },
     {
-      path: '/user',
-      component: () => import('../components/user.vue')
-    },
-    {
       path: '/recommend',
       component: () => import('../components/recommend.vue'),
       children: [
@@ -40,9 +36,16 @@ export default new Router({
     {
       path: '/search',
       component: () => import('../components/search.vue'),
-      children:[{
-        path:':id',component:()=>import('../components/singerDetail.vue')
-      }]
+      children: [
+        {
+          path: ':id',
+          component: () => import('../components/singerDetail.vue')
+        }
+      ]
+    },
+    {
+      path: '/user',
+      component: () => import('../components/user-center.vue')
     }
   ]
 })

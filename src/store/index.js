@@ -5,7 +5,7 @@ import getters from './getter'
 import * as actions from './actions'
 import mutations from './mutations'
 import playMode from '../common/js/playMode'
-import { loadSearchHistory,loadPlayHistory } from '../common/js/cache'
+import { loadSearchHistory, loadPlayHistory, loadFavorite } from '../common/js/cache'
 
 Vue.use(Vuex)
 
@@ -21,6 +21,7 @@ const state = {
   query:'',
   searchHistory:loadSearchHistory(),
   playHistory: loadPlayHistory(),
+  favoriteList: loadFavorite(),
 }
 
 const store = new Vuex.Store({

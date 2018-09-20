@@ -9,10 +9,11 @@ let getters = {
     return state.playList[state.currentIndex] || {}
   },
   disc: state => state.disc,
-  topList:state=>state.topList,
-  query:state=>state.query,
-  searchHistory:state=>state.searchHistory,
-  playHistory:state=>state.playHistory,
+  topList: state => state.topList,
+  query: state => state.query,
+  searchHistory: state => state.searchHistory,
+  playHistory: state => state.playHistory,
+  favoriteList:state=>state.favoriteList,
 }
 
 export default getters
