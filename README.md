@@ -20,10 +20,10 @@
  
 
 ### 技术栈
-#### · vue，vuex，vue-router，axios<br>· less<br>·jsonp，ES6，promise<br>· vue-awesome-swiper，better-scroll等前端库<br>· webpack，eslint，vue-cli
+#### · vue，vuex，vue-router，axios<br>· less<br>· jsonp，ES6，promise<br>· vue-awesome-swiper，better-scroll等前端库<br>· webpack，eslint，vue-cli
 
 ### 组件<br>
-#### ·可在其他项目复用的基础组件：comfirm.vue，loading.vue ,Mheader.vue,scroll.vue....共14个基础组件<br>·与该项目业务逻辑相关的页面组件：player.vue,rank.vue,search.vue,singer.vue.....共12个业务组件
+#### · 可在其他项目复用的基础组件：comfirm.vue，loading.vue ,Mheader.vue,scroll.vue....共14个基础组件<br>· 与该项目业务逻辑相关的页面组件：player.vue,rank.vue,search.vue,singer.vue.....共12个业务组件
 
 ### 安装与运行：<br>
 #### git clone https://github.com/menglala/Dream-Music.git<br>cd Dream-Music<br>npm install<br>npm run dev // 服务端运行<br>npm build // 项目打包<br>
